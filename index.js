@@ -53,6 +53,11 @@ const mu = module.exports = {
      */
     passwords: passwords,
 
+    /**
+     * Javascript Prototype utilities.
+     */
+    prototypes: require('./libs/service.prototypes'),
+
 
     // Functions
 
