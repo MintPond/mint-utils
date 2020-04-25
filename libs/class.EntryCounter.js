@@ -1,6 +1,8 @@
 'use strict';
 
-const precon = require('@mintpond/mint-precon');
+const
+    precon = require('@mintpond/mint-precon'),
+    pu = require('./service.prototypes');
 
 
 class EntryCounter {
@@ -103,6 +105,14 @@ class EntryCounter {
                 _._count = _._count + entry[0];
             }
         }
+    }
+
+
+    static [Symbol.hasInstance](obj) {
+        return pu.isInstanceOfByName(obj, 'EntryCounter') &&
+            pu.isFunction(obj.increment) &&
+            pu.isFunction(obj.clear) &&
+            pu.hasGetters(obj, 'count');
     }
 }
 

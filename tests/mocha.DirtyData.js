@@ -2,7 +2,7 @@
 
 const
     assert = require('assert'),
-    DirtyData = require('./../libs/class.DirtyData');
+    MUDirtyData = require('./../libs/class.DirtyData');
 
 
 describe('DirtyData', () => {
@@ -10,7 +10,7 @@ describe('DirtyData', () => {
     let data;
 
     function globalBE() {
-        data = new DirtyData();
+        data = new MUDirtyData();
     }
 
     context('general', () => {
@@ -235,7 +235,7 @@ describe('DirtyData', () => {
 
     context('property converter', () => {
         beforeEach(() => {
-            data = new DirtyData((path) => {
+            data = new MUDirtyData((path) => {
                 return path.split('.').join('A.') + 'A';
             });
         });
@@ -254,6 +254,57 @@ describe('DirtyData', () => {
         it('should change property names in dirty json', () => {
             data.set('basePath.key1', 10);
             assert.strictEqual(data.dirtyJson, '{"basePathA":{"key1A":10}}');
+        });
+    });
+
+
+    describe('instanceof handling', () => {
+        beforeEach(globalBE);
+
+        it('should return true when the instance is exact', () => {
+            assert.strictEqual(data instanceof MUDirtyData, true);
+        });
+
+        it('should return false when the instance is NOT exact', () => {
+
+            class NotDirtyData {}
+            const not = new NotDirtyData();
+
+            assert.strictEqual(not instanceof MUDirtyData, false);
+        });
+
+        it('should return true when the instance extends the valid class', () => {
+
+            class ExtendedDirtyData extends MUDirtyData {}
+            const extended = new ExtendedDirtyData();
+
+            assert.strictEqual(extended instanceof MUDirtyData, true);
+        });
+
+        it('should return true if the instance meets all of the API criteria', () => {
+
+            class DirtyData {
+                buildData() {}
+                getSseEventData() {}
+                getSseEventDirtyData() {}
+                isDirtyPath() {}
+                clean() {}
+                clear() {}
+                remove() {}
+                removeAll() {}
+                get() {}
+                set() {}
+                setDelta() {}
+                toArray() {}
+                setArray() {}
+                get isDirty() {}
+                get json() {}
+                get dirtyJson() {}
+            }
+
+            const substitute = new DirtyData();
+
+            assert.strictEqual(substitute instanceof MUDirtyData, true);
         });
     });
 });

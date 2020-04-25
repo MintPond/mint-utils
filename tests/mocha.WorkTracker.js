@@ -2,7 +2,7 @@
 
 const
     assert = require('assert'),
-    WorkTracker = require('./../libs/class.WorkTracker');
+    MUWorkTracker = require('./../libs/class.WorkTracker');
 
 
 describe('WorkTracker', () => {
@@ -10,7 +10,7 @@ describe('WorkTracker', () => {
     let workTracker;
 
     function globalBe() {
-        workTracker = new WorkTracker('contextName');
+        workTracker = new MUWorkTracker('contextName');
     }
 
     beforeEach(globalBe);
@@ -32,7 +32,7 @@ describe('WorkTracker', () => {
 
         it('should return a WorkTracker instance', () => {
             const child = workTracker.createChild('childName');
-            assert.strictEqual(child instanceof WorkTracker, true);
+            assert.strictEqual(child instanceof MUWorkTracker, true);
         });
 
         it('should return a WorkTracker instance with correct context name', () => {
@@ -194,7 +194,7 @@ describe('WorkTracker', () => {
         it('should emit EVENT_WORK_DONE event when inProgress reaches 0', () => {
             let isEventEmitted = false;
 
-            workTracker.on(WorkTracker.EVENT_WORK_DONE, () => {
+            workTracker.on(MUWorkTracker.EVENT_WORK_DONE, () => {
                 isEventEmitted = true;
             });
 
@@ -214,7 +214,7 @@ describe('WorkTracker', () => {
         it('should emit EVENT_WORK_DONE event in parents when inProgress reaches 0', () => {
             let isEventEmitted = false;
 
-            workTracker.on(WorkTracker.EVENT_WORK_DONE, () => {
+            workTracker.on(MUWorkTracker.EVENT_WORK_DONE, () => {
                 isEventEmitted = true;
             });
 
@@ -236,7 +236,7 @@ describe('WorkTracker', () => {
         it('should NOT emit EVENT_WORK_DONE event in parents while parent is working', () => {
             let isEventEmitted = false;
 
-            workTracker.on(WorkTracker.EVENT_WORK_DONE, () => {
+            workTracker.on(MUWorkTracker.EVENT_WORK_DONE, () => {
                 isEventEmitted = true;
             });
 
@@ -264,7 +264,7 @@ describe('WorkTracker', () => {
         it('should NOT emit EVENT_WORK_DONE event in parents while another child is working', () => {
             let isEventEmitted = false;
 
-            workTracker.on(WorkTracker.EVENT_WORK_DONE, () => {
+            workTracker.on(MUWorkTracker.EVENT_WORK_DONE, () => {
                 isEventEmitted = true;
             });
 
@@ -340,6 +340,55 @@ describe('WorkTracker', () => {
             workTracker.reset();
             const status = child.getStatus('childTracker');
             assert.strictEqual(status.count, 0);
+        });
+    });
+
+
+    describe('instanceof handling', () => {
+        beforeEach(globalBe);
+
+        it('should return true when the instance is exact', () => {
+            assert.strictEqual(workTracker instanceof MUWorkTracker, true);
+        });
+
+        it('should return false when the instance is NOT exact', () => {
+
+            class NotWorkTracker {}
+            const not = new NotWorkTracker();
+
+            assert.strictEqual(not instanceof MUWorkTracker, false);
+        });
+
+        it('should return true when the instance extends the valid class', () => {
+
+            class ExtendedWorkTracker extends MUWorkTracker {}
+            const extended = new ExtendedWorkTracker('extended');
+
+            assert.strictEqual(extended instanceof MUWorkTracker, true);
+        });
+
+        it('should return true if the instance meets all of the API criteria', () => {
+
+            class WorkTracker {
+                createChild() {}
+                increment() {}
+                start() {}
+                stop() {}
+                getStatus() {}
+                reset() {}
+                destroy() {}
+                get contextName() {}
+                get timingsEnabled() {}
+                get totalInProgress() {}
+                get localTotalInProgress() {}
+                get isWorking() {}
+                get inProgressArr() {}
+                get profile() {}
+            }
+
+            const substitute = new WorkTracker();
+
+            assert.strictEqual(substitute instanceof MUWorkTracker, true);
         });
     });
 

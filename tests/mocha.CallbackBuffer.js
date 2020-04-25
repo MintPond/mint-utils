@@ -2,7 +2,7 @@
 
 const
     assert = require('assert'),
-    CallbackBuffer = require('./../libs/class.CallbackBuffer');
+    MUCallbackBuffer = require('./../libs/class.CallbackBuffer');
 
 
 describe('CallbackBuffer', () => {
@@ -10,7 +10,7 @@ describe('CallbackBuffer', () => {
     let callbacks;
 
     describe('addCallback function', () => {
-        beforeEach(() => { callbacks = new CallbackBuffer(); });
+        beforeEach(() => { callbacks = new MUCallbackBuffer(); });
 
         it('should not call callback', () => {
             callbacks.addCallback('key', () => {
@@ -57,7 +57,7 @@ describe('CallbackBuffer', () => {
 
 
     describe('callback function', () => {
-        beforeEach(() => { callbacks = new CallbackBuffer(); });
+        beforeEach(() => { callbacks = new MUCallbackBuffer(); });
 
         it('should only run callbacks with same key', () => {
             const array = [];
@@ -102,6 +102,42 @@ describe('CallbackBuffer', () => {
 
             callbacks.callback('key', 1, 2, 3);
             assert.strictEqual(isCalled, true);
+        });
+    });
+
+    describe('instanceof handling', () => {
+        beforeEach(() => { callbacks = new MUCallbackBuffer(); });
+
+        it('should return true when the instance is exact', () => {
+            assert.strictEqual(callbacks instanceof MUCallbackBuffer, true);
+        });
+
+        it('should return false when the instance is NOT exact', () => {
+
+            class NotCallbackBuffer {}
+            const not = new NotCallbackBuffer();
+
+            assert.strictEqual(not instanceof MUCallbackBuffer, false);
+        });
+
+        it('should return true when the instance extends the valid class', () => {
+
+            class ExtendedCallbackBuffer extends MUCallbackBuffer {}
+            const extended = new ExtendedCallbackBuffer();
+
+            assert.strictEqual(extended instanceof MUCallbackBuffer, true);
+        });
+
+        it('should return true if the instance meets all of the API criteria', () => {
+
+            class CallbackBuffer {
+                addCallback() {}
+                callback() {}
+            }
+
+            const substitute = new CallbackBuffer();
+
+            assert.strictEqual(substitute instanceof MUCallbackBuffer, true);
         });
     });
 });

@@ -1,6 +1,9 @@
 'use strict';
 
-const precon = require('@mintpond/mint-precon');
+const
+    precon = require('@mintpond/mint-precon'),
+    pu = require('./service.prototypes');
+
 
 /**
  * This is a simple counter that allows setting a start count, a minimum and maximum count, and will automatically wrap
@@ -75,6 +78,14 @@ class Counter {
     reset() {
         const _ = this;
         _._counter = _._startCount;
+    }
+
+
+    static [Symbol.hasInstance](obj) {
+        return pu.isInstanceOfByName(obj, 'Counter') &&
+            pu.isFunction(obj.next) &&
+            pu.isFunction(obj.nextHex32) &&
+            pu.isFunction(obj.reset);
     }
 }
 

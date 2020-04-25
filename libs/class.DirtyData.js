@@ -1,6 +1,9 @@
 'use strict';
 
-const precon = require('@mintpond/mint-precon');
+const
+    precon = require('@mintpond/mint-precon'),
+    pu = require('./service.prototypes');
+
 
 /**
  * This is used to track changes to data so that data can be filtered by modification.
@@ -515,6 +518,26 @@ class DirtyData {
             key: localKey,
             index: index
         };
+    }
+
+
+    static [Symbol.hasInstance](obj) {
+        return pu.isInstanceOfByName(obj, 'DirtyData') &&
+            pu.isFunction(obj.buildData) &&
+            pu.isFunction(obj.getSseEventData) &&
+            pu.isFunction(obj.getSseEventDirtyData) &&
+            pu.isFunction(obj.isDirtyPath) &&
+            pu.isFunction(obj.clean) &&
+            pu.isFunction(obj.clear) &&
+            pu.isFunction(obj.remove) &&
+            pu.isFunction(obj.removeAll) &&
+            pu.isFunction(obj.get) &&
+            pu.isFunction(obj.set) &&
+            pu.isFunction(obj.setDelta) &&
+            pu.isFunction(obj.toArray) &&
+            pu.isFunction(obj.setArray) &&
+            pu.hasGetters(obj,
+                'isDirty', 'json', 'dirtyJson');
     }
 }
 

@@ -2,7 +2,7 @@
 
 const
     assert = require('assert'),
-    HighLowAverage = require('./../libs/class.HighLowAverage');
+    MUHighLowAverage = require('./../libs/class.HighLowAverage');
 
 
 describe('HighLowAverage', () => {
@@ -10,7 +10,7 @@ describe('HighLowAverage', () => {
     let hla;
 
     function globalBE() {
-        hla = new HighLowAverage();
+        hla = new MUHighLowAverage();
     }
 
     beforeEach(globalBE);
@@ -102,7 +102,7 @@ describe('HighLowAverage', () => {
     context('filter function', () => {
 
         it('should receive correct arguments', done => {
-            hla = new HighLowAverage(null, (a, b, c) => {
+            hla = new MUHighLowAverage(null, (a, b, c) => {
                 assert.strictEqual(a, 0);
                 assert.strictEqual(b, 'b');
                 assert.strictEqual(c, true);
@@ -114,12 +114,52 @@ describe('HighLowAverage', () => {
         });
 
         it('should filter values', () => {
-            hla = new HighLowAverage(null, (a, b, c) => {
+            hla = new MUHighLowAverage(null, (a, b, c) => {
                 return false;
             });
 
             hla.add(0, 'b', true);
             assert.strictEqual(hla.count, 0);
+        });
+    });
+
+    describe('instanceof handling', () => {
+        beforeEach(globalBE);
+
+        it('should return true when the instance is exact', () => {
+            assert.strictEqual(hla instanceof MUHighLowAverage, true);
+        });
+
+        it('should return false when the instance is NOT exact', () => {
+
+            class NotHighLowAverage {}
+            const not = new NotHighLowAverage();
+
+            assert.strictEqual(not instanceof MUHighLowAverage, false);
+        });
+
+        it('should return true when the instance extends the valid class', () => {
+
+            class ExtendedHighLowAverage extends MUHighLowAverage {}
+            const extended = new ExtendedHighLowAverage();
+
+            assert.strictEqual(extended instanceof MUHighLowAverage, true);
+        });
+
+        it('should return true if the instance meets all of the API criteria', () => {
+
+            class HighLowAverage {
+                add() {}
+                clear() {}
+                get count() {}
+                get high() {}
+                get average() {}
+                get low() {}
+            }
+
+            const substitute = new HighLowAverage();
+
+            assert.strictEqual(substitute instanceof MUHighLowAverage, true);
         });
     });
 });

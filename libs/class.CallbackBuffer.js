@@ -1,6 +1,9 @@
 'use strict';
 
-const precon = require('@mintpond/mint-precon');
+const
+    precon = require('@mintpond/mint-precon'),
+    pu = require('./service.prototypes');
+
 
 /**
  * The purpose of this class is to prevent an async operation from running more than once using the same parameters
@@ -73,6 +76,13 @@ class CallbackBuffer {
         cbArr.forEach(cb => {
             cb && cb(...args);
         });
+    }
+
+
+    static [Symbol.hasInstance](obj) {
+        return pu.isInstanceOfByName(obj, 'CallbackBuffer') &&
+            pu.isFunction(obj.addCallback) &&
+            pu.isFunction(obj.callback);
     }
 }
 

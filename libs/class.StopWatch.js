@@ -1,5 +1,8 @@
 'use strict';
 
+const pu = require('./service.prototypes');
+
+
 /**
  * Basic stop watch.
  */
@@ -121,6 +124,16 @@ class StopWatch {
             maxMs: _._maxMs === Number.MIN_SAFE_INTEGER ? 0 : _._maxMs,
             minMs: _._minMs === Number.MAX_SAFE_INTEGER ? 0 : _._minMs
         }
+    }
+
+
+    static [Symbol.hasInstance](obj) {
+        return pu.isInstanceOfByName(obj, 'StopWatch') &&
+            pu.isFunction(obj.start) &&
+            pu.isFunction(obj.stop) &&
+            pu.isFunction(obj.reset) &&
+            pu.hasGetters(obj,
+                'timeMs', 'maxTimeMs', 'minTimeMs', 'totalTimeMs', 'starts', 'isStarted');
     }
 }
 

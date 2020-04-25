@@ -2,7 +2,7 @@
 
 const
     assert = require('assert'),
-    EntryCounter = require('./../libs/class.EntryCounter');
+    MUEntryCounter = require('./../libs/class.EntryCounter');
 
 
 describe('EntryCounter', () => {
@@ -10,7 +10,7 @@ describe('EntryCounter', () => {
     let counter;
 
     function globalBE() {
-        counter = new EntryCounter();
+        counter = new MUEntryCounter();
     }
 
     beforeEach(globalBE);
@@ -49,7 +49,7 @@ describe('EntryCounter', () => {
     context('filter function', () => {
 
         it('should receive correct arguments', done => {
-            counter = new EntryCounter(null, (a, b, c) => {
+            counter = new MUEntryCounter(null, (a, b, c) => {
                 assert.strictEqual(a, 1);
                 assert.strictEqual(b, 'b');
                 assert.strictEqual(c, true);
@@ -61,12 +61,49 @@ describe('EntryCounter', () => {
         });
 
         it('should filter values', () => {
-            counter = new EntryCounter(null, (a, b, c) => {
+            counter = new MUEntryCounter(null, (a, b, c) => {
                 return false;
             });
 
             counter.increment(1, 'b', true);
             assert.strictEqual(counter.count, 0);
+        });
+    });
+
+
+    describe('instanceof handling', () => {
+
+        it('should return true when the instance is exact', () => {
+            assert.strictEqual(counter instanceof MUEntryCounter, true);
+        });
+
+        it('should return false when the instance is NOT exact', () => {
+
+            class NotEntryCounter {}
+            const not = new NotEntryCounter();
+
+            assert.strictEqual(not instanceof MUEntryCounter, false);
+        });
+
+        it('should return true when the instance extends the valid class', () => {
+
+            class ExtendedEntryCounter extends MUEntryCounter {}
+            const extended = new ExtendedEntryCounter();
+
+            assert.strictEqual(extended instanceof MUEntryCounter, true);
+        });
+
+        it('should return true if the instance meets all of the API criteria', () => {
+
+            class EntryCounter {
+                increment() {}
+                clear() {}
+                get count() {}
+            }
+
+            const substitute = new EntryCounter();
+
+            assert.strictEqual(substitute instanceof MUEntryCounter, true);
         });
     });
 });

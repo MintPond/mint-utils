@@ -1,6 +1,8 @@
 'use strict';
 
-const precon = require('@mintpond/mint-precon');
+const
+    precon = require('@mintpond/mint-precon'),
+    pu = require('./service.prototypes');
 
 const FACTOR = 100000000;
 const FACTOR_BI = 100000000n;
@@ -165,6 +167,15 @@ class HighLowAverage {
         else {
             _._averageBi = _._totalBi / _._countBi;
         }
+    }
+
+
+    static [Symbol.hasInstance](obj) {
+        return pu.isInstanceOfByName(obj, 'HighLowAverage') &&
+            pu.isFunction(obj.add) &&
+            pu.isFunction(obj.clear) &&
+            pu.hasGetters(obj,
+                'count', 'high', 'average', 'low');
     }
 }
 

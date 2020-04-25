@@ -2,7 +2,9 @@
 
 const
     async = require('async'),
-    precon = require('@mintpond/mint-precon');
+    precon = require('@mintpond/mint-precon'),
+    pu = require('./service.prototypes');
+
 
 /**
  * Timeout function manager.
@@ -254,6 +256,19 @@ class Timeouts {
 
         if (_._maxStack && stack.length > _._maxStack)
             stack.shift();
+    }
+
+
+    static [Symbol.hasInstance](obj) {
+        return pu.isInstanceOfByName(obj, 'Timeouts') &&
+            pu.isFunction(obj.stopAll) &&
+            pu.isFunction(obj.stop) &&
+            pu.isFunction(obj.addAsync) &&
+            pu.isFunction(obj.add) &&
+            pu.isFunction(obj.setAsync) &&
+            pu.isFunction(obj.set) &&
+            pu.isFunction(obj.stackAsync) &&
+            pu.isFunction(obj.stack);
     }
 }
 

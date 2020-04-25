@@ -2,7 +2,8 @@
 
 const
     async = require('async'),
-    precon = require('@mintpond/mint-precon');
+    precon = require('@mintpond/mint-precon'),
+    pu = require('./service.prototypes');
 
 
 /*
@@ -269,6 +270,22 @@ class TTLMemCache {
     destroy() {
         const _ = this;
         _._cache.destroy();
+    }
+
+
+    static [Symbol.hasInstance](obj) {
+        return pu.isInstanceOfByName(obj, 'TTLMemCache') &&
+            pu.isFunction(obj.get) &&
+            pu.isFunction(obj.set) &&
+            pu.isFunction(obj.delete) &&
+            pu.isFunction(obj.clear) &&
+            pu.isFunction(obj.forEachKey) &&
+            pu.isFunction(obj.forEachEntry) &&
+            pu.isFunction(obj.keys) &&
+            pu.isFunction(obj.values) &&
+            pu.isFunction(obj.destroy) &&
+            pu.hasGetters(obj,
+                'defaultTTL', 'isResetOnAccess', 'size', 'checkInterval');
     }
 }
 

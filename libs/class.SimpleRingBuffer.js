@@ -1,6 +1,8 @@
 'use strict';
 
-const precon = require('@mintpond/mint-precon');
+const
+    precon = require('@mintpond/mint-precon'),
+    pu = require('./service.prototypes');
 
 
 /**
@@ -185,6 +187,19 @@ class SimpleRingBuffer {
         }
 
         return value;
+    }
+
+
+    static [Symbol.hasInstance](obj) {
+        return pu.isInstanceOfByName(obj, 'SimpleRingBuffer') &&
+            pu.isFunction(obj.push) &&
+            pu.isFunction(obj.toArray) &&
+            pu.isFunction(obj.clear) &&
+            pu.isFunction(obj.forEach) &&
+            pu.isFunction(obj.map) &&
+            pu.isFunction(obj.reduce) &&
+            pu.hasGetters(obj,
+                'size', 'capacity');
     }
 }
 

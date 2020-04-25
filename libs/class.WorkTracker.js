@@ -3,7 +3,8 @@
 const
     EventEmitter = require('events'),
     precon = require('@mintpond/mint-precon'),
-    StopWatch = require('./class.StopWatch');
+    StopWatch = require('./class.StopWatch'),
+    pu = require('./service.prototypes');
 
 
 class WorkTracker extends EventEmitter {
@@ -321,6 +322,21 @@ class WorkTracker extends EventEmitter {
     _emitWorkDone() {
         const _ = this;
         _.emit(WorkTracker.EVENT_WORK_DONE);
+    }
+
+
+    static [Symbol.hasInstance](obj) {
+        return pu.isInstanceOfByName(obj, 'WorkTracker') &&
+            pu.isFunction(obj.createChild) &&
+            pu.isFunction(obj.increment) &&
+            pu.isFunction(obj.start) &&
+            pu.isFunction(obj.stop) &&
+            pu.isFunction(obj.getStatus) &&
+            pu.isFunction(obj.reset) &&
+            pu.isFunction(obj.destroy) &&
+            pu.hasGetters(obj,
+                'contextName', 'timingsEnabled', 'totalInProgress', 'localTotalInProgress',
+                'isWorking', 'inProgressArr', 'profile');
     }
 }
 

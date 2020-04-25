@@ -2,7 +2,7 @@
 
 const
     assert = require('assert'),
-    TTLMemCache = require('./../libs/class.TTLMemCache');
+    MUTTLMemCache = require('./../libs/class.TTLMemCache');
 
 
 describe('TTLMemCache', () => {
@@ -10,14 +10,14 @@ describe('TTLMemCache', () => {
     let cache;
 
     function resetBE() {
-        cache = new TTLMemCache({
+        cache = new MUTTLMemCache({
             ttl: 1,
             isResetOnAccess: true
         });
     }
 
     function noResetBE() {
-        cache = new TTLMemCache({
+        cache = new MUTTLMemCache({
             ttl: 1,
             isResetOnAccess: false
         });
@@ -126,6 +126,55 @@ describe('TTLMemCache', () => {
                 assert.strictEqual(value, undefined);
                 done();
             }, 1100);
+        });
+    });
+
+    describe('instanceof handling', () => {
+        beforeEach(resetBE);
+        afterEach(globalAE);
+
+        it('should return true when the instance is exact', () => {
+            assert.strictEqual(cache instanceof MUTTLMemCache, true);
+        });
+
+        it('should return false when the instance is NOT exact', () => {
+
+            class NotTTLMemCache {}
+            const not = new NotTTLMemCache();
+
+            assert.strictEqual(not instanceof MUTTLMemCache, false);
+        });
+
+        it('should return true when the instance extends the valid class', () => {
+
+            class ExtendedTTLMemCache extends MUTTLMemCache {}
+            const extended = new ExtendedTTLMemCache();
+            extended.destroy();
+
+            assert.strictEqual(extended instanceof MUTTLMemCache, true);
+        });
+
+        it('should return true if the instance meets all of the API criteria', () => {
+
+            class TTLMemCache {
+                get() {}
+                set() {}
+                delete() {}
+                clear() {}
+                forEachKey() {}
+                forEachEntry() {}
+                keys() {}
+                values() {}
+                destroy() {}
+                get defaultTTL() {}
+                get isResetOnAccess() {}
+                get size() {}
+                get checkInterval() {}
+            }
+
+            const substitute = new TTLMemCache();
+
+            assert.strictEqual(substitute instanceof MUTTLMemCache, true);
         });
     });
 
