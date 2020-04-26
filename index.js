@@ -24,6 +24,7 @@ const mu = module.exports = {
 
     // Classes
 
+    AdaptiveConfig: require('./libs/class.AdaptiveConfig'),
     CallbackBuffer: require('./libs/class.CallbackBuffer'),
     Counter: require('./libs/class.Counter'),
     DirtyData: require('./libs/class.DirtyData'),
