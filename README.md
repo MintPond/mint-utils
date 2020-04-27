@@ -18,7 +18,7 @@ npm install mintpond/mint-utils --save
 npm config set @mintpond:registry https://npm.pkg.github.com/mintpond
 npm config set //npm.pkg.github.com/:_authToken <MY_GITHUB_AUTH_TOKEN>
 
-npm install @mintpond/mint-utils@1.2.0 --save
+npm install @mintpond/mint-utils@1.2.1 --save
 ```
 
 __Install & Test__

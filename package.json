@@ -1,6 +1,6 @@
 {
   "name": "@mintpond/mint-utils",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "General and common utility Classes and Functions used by MintPond",
   "author": "JCThePants",
   "main": "index.js",
