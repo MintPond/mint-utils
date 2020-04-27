@@ -2,7 +2,8 @@
 
 const
     precon = require('@mintpond/mint-precon'),
-    AdaptiveConfigValue = require('./class.AdaptiveConfigValue');
+    AdaptiveConfigValue = require('./class.AdaptiveConfigValue'),
+    pu = require('./service.prototypes');
 
 
 /**
@@ -174,6 +175,16 @@ class AdaptiveConfig {
 
         const _ = this;
         delete _._paramsOMap[paramName];
+    }
+
+
+    static [Symbol.hasInstance](obj) {
+        return pu.isInstanceOfByName(obj, 'AdaptiveConfig') &&
+            pu.isFunction(obj.getValue) &&
+            pu.isFunction(obj.setValue) &&
+            pu.isFunction(obj.clearValue) &&
+            pu.isFunction(obj.setParam) &&
+            pu.isFunction(obj.clearParam);
     }
 }
 
