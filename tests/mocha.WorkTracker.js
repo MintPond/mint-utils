@@ -392,4 +392,194 @@ describe('WorkTracker', () => {
         });
     });
 
+    describe('profile property', () => {
+        beforeEach(globalBe);
+
+        it('should return object', () => {
+            assert.strictEqual(typeof workTracker.profile, 'object');
+        });
+
+        it('should return object with contextName value', () => {
+            assert.strictEqual(workTracker.profile.contextName, 'contextName');
+        });
+
+        it('should return object with isWorking value', () => {
+            assert.strictEqual(workTracker.profile.isWorking, false);
+        });
+
+        it('should return object with timingsEnabled value', () => {
+            assert.strictEqual(workTracker.profile.timingsEnabled, false);
+        });
+
+        it('should return object with total value', () => {
+            assert.strictEqual(workTracker.profile.total, 0);
+        });
+
+        it('should return object with localTotal value', () => {
+            assert.strictEqual(workTracker.profile.localTotal, 0);
+        });
+
+        it('should return object with inProgress value', () => {
+            assert.deepEqual(workTracker.profile.inProgress, []);
+        });
+
+        it('should return object with children value', () => {
+            assert.deepEqual(workTracker.profile.children, []);
+        });
+
+        context('1 start call', () => {
+            beforeEach(globalBe);
+            beforeEach(() => { workTracker.start('myTaskName'); });
+
+            it('should return object with isWorking value', () => {
+                assert.strictEqual(workTracker.profile.isWorking, true);
+            });
+
+            it('should return object with timingsEnabled value', () => {
+                assert.strictEqual(workTracker.profile.timingsEnabled, false);
+            });
+
+            it('should return object with total value', () => {
+                assert.strictEqual(workTracker.profile.total, 1);
+            });
+
+            it('should return object with localTotal value', () => {
+                assert.strictEqual(workTracker.profile.localTotal, 1);
+            });
+
+            it('should return object with inProgress value', () => {
+                assert.deepEqual(workTracker.profile.inProgress, ['myTaskName']);
+            });
+
+            it('should return object with children value', () => {
+                assert.deepEqual(workTracker.profile.children, []);
+            });
+        });
+
+        context('1 start call, 1 stop call', () => {
+            beforeEach(globalBe);
+            beforeEach(() => {
+                workTracker.start('myTaskName');
+                workTracker.stop('myTaskName');
+            });
+
+            it('should return object with isWorking value', () => {
+                assert.strictEqual(workTracker.profile.isWorking, false);
+            });
+
+            it('should return object with timingsEnabled value', () => {
+                assert.strictEqual(workTracker.profile.timingsEnabled, false);
+            });
+
+            it('should return object with total value', () => {
+                assert.strictEqual(workTracker.profile.total, 0);
+            });
+
+            it('should return object with localTotal value', () => {
+                assert.strictEqual(workTracker.profile.localTotal, 0);
+            });
+
+            it('should return object with inProgress value', () => {
+                assert.deepEqual(workTracker.profile.inProgress, []);
+            });
+
+            it('should return object with children value', () => {
+                assert.deepEqual(workTracker.profile.children, []);
+            });
+        });
+
+        context('1 child', () => {
+            beforeEach(globalBe);
+            beforeEach(() => { workTracker.createChild('myChild'); });
+
+            it('should return object with children value', () => {
+                assert.strictEqual(workTracker.profile.children.length, 1);
+                assert.strictEqual(workTracker.profile.children[0].contextName, 'myChild');
+            });
+
+        });
+
+        context('1 child with 1 start call', () => {
+            beforeEach(globalBe);
+            beforeEach(() => {
+                const myChild = workTracker.createChild('myChild');
+                myChild.start('myTask');
+            });
+
+            it('should return object with contextName value', () => {
+                assert.strictEqual(workTracker.profile.contextName, 'contextName');
+            });
+
+            it('should return object with isWorking value', () => {
+                assert.strictEqual(workTracker.profile.isWorking, true);
+            });
+
+            it('should return object with timingsEnabled value', () => {
+                assert.strictEqual(workTracker.profile.timingsEnabled, false);
+            });
+
+            it('should return object with total value', () => {
+                assert.strictEqual(workTracker.profile.total, 1);
+            });
+
+            it('should return object with localTotal value', () => {
+                assert.strictEqual(workTracker.profile.localTotal, 0);
+            });
+
+            it('should return object with inProgress value', () => {
+                assert.deepEqual(workTracker.profile.inProgress, []);
+            });
+
+            it('should return object with children value', () => {
+                assert.strictEqual(workTracker.profile.children.length, 1);
+                assert.strictEqual(workTracker.profile.children[0].contextName, 'myChild');
+                assert.strictEqual(workTracker.profile.children[0].isWorking, true);
+                assert.strictEqual(workTracker.profile.children[0].total, 1);
+                assert.strictEqual(workTracker.profile.children[0].localTotal, 1);
+                assert.deepEqual(workTracker.profile.children[0].inProgress, ['myTask']);
+            });
+        });
+
+        context('1 child with 1 start call and 1 stop call', () => {
+            beforeEach(globalBe);
+            beforeEach(() => {
+                const myChild = workTracker.createChild('myChild');
+                myChild.start('myTask');
+                myChild.stop('myTask');
+            });
+
+            it('should return object with contextName value', () => {
+                assert.strictEqual(workTracker.profile.contextName, 'contextName');
+            });
+
+            it('should return object with isWorking value', () => {
+                assert.strictEqual(workTracker.profile.isWorking, false);
+            });
+
+            it('should return object with timingsEnabled value', () => {
+                assert.strictEqual(workTracker.profile.timingsEnabled, false);
+            });
+
+            it('should return object with total value', () => {
+                assert.strictEqual(workTracker.profile.total, 0);
+            });
+
+            it('should return object with localTotal value', () => {
+                assert.strictEqual(workTracker.profile.localTotal, 0);
+            });
+
+            it('should return object with inProgress value', () => {
+                assert.deepEqual(workTracker.profile.inProgress, []);
+            });
+
+            it('should return object with children value', () => {
+                assert.strictEqual(workTracker.profile.children.length, 1);
+                assert.strictEqual(workTracker.profile.children[0].contextName, 'myChild');
+                assert.strictEqual(workTracker.profile.children[0].isWorking, false);
+                assert.strictEqual(workTracker.profile.children[0].total, 0);
+                assert.strictEqual(workTracker.profile.children[0].localTotal, 0);
+                assert.deepEqual(workTracker.profile.children[0].inProgress, []);
+            });
+        });
+    });
 });

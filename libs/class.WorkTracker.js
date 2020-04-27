@@ -114,6 +114,7 @@ class WorkTracker extends EventEmitter {
      * @returns {{contextName:string, total:number, inProgress:string[], children:*[], timingsEnabled:boolean, isWorking:boolean, localTotal:number}}
      */
     get profile() {
+        const _ = this;
         return {
             contextName: _._contextName,
             isWorking: _.isWorking,
