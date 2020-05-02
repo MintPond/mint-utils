@@ -191,46 +191,4 @@ describe('SimpleRingBuffer', () => {
             assert.strictEqual(reduced, 'item2item3item4');
         });
     });
-
-    describe('instanceof handling', () => {
-        beforeEach(globalBE);
-
-        it('should return true when the instance is exact', () => {
-            assert.strictEqual(buffer instanceof MUSimpleRingBuffer, true);
-        });
-
-        it('should return false when the instance is NOT exact', () => {
-
-            class NotSimpleRingBuffer {}
-            const not = new NotSimpleRingBuffer();
-
-            assert.strictEqual(not instanceof MUSimpleRingBuffer, false);
-        });
-
-        it('should return true when the instance extends the valid class', () => {
-
-            class ExtendedSimpleRingBuffer extends MUSimpleRingBuffer {}
-            const extended = new ExtendedSimpleRingBuffer(10);
-
-            assert.strictEqual(extended instanceof MUSimpleRingBuffer, true);
-        });
-
-        it('should return true if the instance meets all of the API criteria', () => {
-
-            class SimpleRingBuffer {
-                push() {}
-                toArray() {}
-                clear() {}
-                forEach() {}
-                map() {}
-                reduce() {}
-                get size() {}
-                get capacity() {}
-            }
-
-            const substitute = new SimpleRingBuffer();
-
-            assert.strictEqual(substitute instanceof MUSimpleRingBuffer, true);
-        });
-    });
 });

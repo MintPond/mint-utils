@@ -69,41 +69,4 @@ describe('EntryCounter', () => {
             assert.strictEqual(counter.count, 0);
         });
     });
-
-
-    describe('instanceof handling', () => {
-
-        it('should return true when the instance is exact', () => {
-            assert.strictEqual(counter instanceof MUEntryCounter, true);
-        });
-
-        it('should return false when the instance is NOT exact', () => {
-
-            class NotEntryCounter {}
-            const not = new NotEntryCounter();
-
-            assert.strictEqual(not instanceof MUEntryCounter, false);
-        });
-
-        it('should return true when the instance extends the valid class', () => {
-
-            class ExtendedEntryCounter extends MUEntryCounter {}
-            const extended = new ExtendedEntryCounter();
-
-            assert.strictEqual(extended instanceof MUEntryCounter, true);
-        });
-
-        it('should return true if the instance meets all of the API criteria', () => {
-
-            class EntryCounter {
-                increment() {}
-                clear() {}
-                get count() {}
-            }
-
-            const substitute = new EntryCounter();
-
-            assert.strictEqual(substitute instanceof MUEntryCounter, true);
-        });
-    });
 });

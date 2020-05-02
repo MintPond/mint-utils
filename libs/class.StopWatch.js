@@ -127,13 +127,9 @@ class StopWatch {
     }
 
 
+    static get CLASS_ID() { return 'b8238c87608e930ebb0dbaeedd5ce705fea7866be6206ed201717d8879af9718'; }
     static [Symbol.hasInstance](obj) {
-        return pu.isInstanceOfByName(obj, 'StopWatch') &&
-            pu.isFunction(obj.start) &&
-            pu.isFunction(obj.stop) &&
-            pu.isFunction(obj.reset) &&
-            pu.hasGetters(obj,
-                'timeMs', 'maxTimeMs', 'minTimeMs', 'totalTimeMs', 'starts', 'isStarted');
+        return pu.isInstanceOfById(obj, StopWatch.CLASS_ID);
     }
 }
 

@@ -79,10 +79,9 @@ class CallbackBuffer {
     }
 
 
+    static get CLASS_ID() { return '17e2763e22d5520782b974df7bcc89ff5d41c50dc080e3a0ebe4d45a12dbd10d'; }
     static [Symbol.hasInstance](obj) {
-        return pu.isInstanceOfByName(obj, 'CallbackBuffer') &&
-            pu.isFunction(obj.addCallback) &&
-            pu.isFunction(obj.callback);
+        return pu.isInstanceOfById(obj, CallbackBuffer.CLASS_ID);
     }
 }
 

@@ -259,16 +259,9 @@ class Timeouts {
     }
 
 
+    static get CLASS_ID() { return 'e9c877b278f9f1628b56ad43decc6fa8cd0b96514389b89c75c7ade8596db12f'; }
     static [Symbol.hasInstance](obj) {
-        return pu.isInstanceOfByName(obj, 'Timeouts') &&
-            pu.isFunction(obj.stopAll) &&
-            pu.isFunction(obj.stop) &&
-            pu.isFunction(obj.addAsync) &&
-            pu.isFunction(obj.add) &&
-            pu.isFunction(obj.setAsync) &&
-            pu.isFunction(obj.set) &&
-            pu.isFunction(obj.stackAsync) &&
-            pu.isFunction(obj.stack);
+        return pu.isInstanceOfById(obj, Timeouts.CLASS_ID);
     }
 }
 

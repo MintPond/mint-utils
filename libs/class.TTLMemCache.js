@@ -273,19 +273,10 @@ class TTLMemCache {
     }
 
 
+    static get CLASS_ID() { return '518540baa9d96cdfc5291538539410f9b8df6ba8124915dcb412755ddf60bcaa'; }
+    static TEST_DESTROY(ttlMemCache) { ttlMemCache.destroy(); }
     static [Symbol.hasInstance](obj) {
-        return pu.isInstanceOfByName(obj, 'TTLMemCache') &&
-            pu.isFunction(obj.get) &&
-            pu.isFunction(obj.set) &&
-            pu.isFunction(obj.delete) &&
-            pu.isFunction(obj.clear) &&
-            pu.isFunction(obj.forEachKey) &&
-            pu.isFunction(obj.forEachEntry) &&
-            pu.isFunction(obj.keys) &&
-            pu.isFunction(obj.values) &&
-            pu.isFunction(obj.destroy) &&
-            pu.hasGetters(obj,
-                'defaultTTL', 'isResetOnAccess', 'size', 'checkInterval');
+        return pu.isInstanceOfById(obj, TTLMemCache.CLASS_ID);
     }
 }
 

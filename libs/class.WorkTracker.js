@@ -326,18 +326,10 @@ class WorkTracker extends EventEmitter {
     }
 
 
+    static get CLASS_ID() { return '640d1584c2cfa965d41ff7f8725d74b280ccfba357c01d3729f3236203699a2d'; }
+    static TEST_INSTANCE(WorkTracker) { return new WorkTracker('test'); }
     static [Symbol.hasInstance](obj) {
-        return pu.isInstanceOfByName(obj, 'WorkTracker') &&
-            pu.isFunction(obj.createChild) &&
-            pu.isFunction(obj.increment) &&
-            pu.isFunction(obj.start) &&
-            pu.isFunction(obj.stop) &&
-            pu.isFunction(obj.getStatus) &&
-            pu.isFunction(obj.reset) &&
-            pu.isFunction(obj.destroy) &&
-            pu.hasGetters(obj,
-                'contextName', 'timingsEnabled', 'totalInProgress', 'localTotalInProgress',
-                'isWorking', 'inProgressArr', 'profile');
+        return pu.isInstanceOfById(obj, WorkTracker.CLASS_ID);
     }
 }
 

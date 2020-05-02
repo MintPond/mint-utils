@@ -131,43 +131,4 @@ describe('AdaptiveConfig', () => {
             assert.strictEqual(adaptiveConfig.getValue('adaptNumVal', null, true/*isStrictCompliance*/), 3);
         });
     });
-
-    describe('instanceof handling', () => {
-        beforeEach(globalBe);
-
-        it('should return true when the instance is exact', () => {
-            assert.strictEqual(adaptiveConfig instanceof MUAdaptiveConfig, true);
-        });
-
-        it('should return false when the instance is NOT exact', () => {
-
-            class NotAdaptiveConfig {}
-            const not = new NotAdaptiveConfig();
-
-            assert.strictEqual(not instanceof MUAdaptiveConfig, false);
-        });
-
-        it('should return true when the instance extends the valid class', () => {
-
-            class ExtendedAdaptiveConfig extends MUAdaptiveConfig {}
-            const extended = new ExtendedAdaptiveConfig({});
-
-            assert.strictEqual(extended instanceof MUAdaptiveConfig, true);
-        });
-
-        it('should return true if the instance meets all of the API criteria', () => {
-
-            class AdaptiveConfig {
-                getValue() {}
-                setValue() {}
-                clearValue() {}
-                setParam() {}
-                clearParam() {}
-            }
-
-            const substitute = new AdaptiveConfig();
-
-            assert.strictEqual(substitute instanceof MUAdaptiveConfig, true);
-        });
-    });
 });

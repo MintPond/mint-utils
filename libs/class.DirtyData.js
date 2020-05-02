@@ -521,23 +521,9 @@ class DirtyData {
     }
 
 
+    static get CLASS_ID() { return '1cb82a3d4078be7e57a657d4f1b4f8a2da8db1ddff92effc4ac6b73beede1f61'; }
     static [Symbol.hasInstance](obj) {
-        return pu.isInstanceOfByName(obj, 'DirtyData') &&
-            pu.isFunction(obj.buildData) &&
-            pu.isFunction(obj.getSseEventData) &&
-            pu.isFunction(obj.getSseEventDirtyData) &&
-            pu.isFunction(obj.isDirtyPath) &&
-            pu.isFunction(obj.clean) &&
-            pu.isFunction(obj.clear) &&
-            pu.isFunction(obj.remove) &&
-            pu.isFunction(obj.removeAll) &&
-            pu.isFunction(obj.get) &&
-            pu.isFunction(obj.set) &&
-            pu.isFunction(obj.setDelta) &&
-            pu.isFunction(obj.toArray) &&
-            pu.isFunction(obj.setArray) &&
-            pu.hasGetters(obj,
-                'isDirty', 'json', 'dirtyJson');
+        return pu.isInstanceOfById(obj, DirtyData.CLASS_ID);
     }
 }
 

@@ -190,16 +190,10 @@ class SimpleRingBuffer {
     }
 
 
+    static get CLASS_ID() { return 'bba2e2a412480630ebf94b7ae5d2a386a45252092e822c2b801ec13f81ddb869'; }
+    static TEST_INSTANCE(SimpleRingBuffer) { return new SimpleRingBuffer(3); }
     static [Symbol.hasInstance](obj) {
-        return pu.isInstanceOfByName(obj, 'SimpleRingBuffer') &&
-            pu.isFunction(obj.push) &&
-            pu.isFunction(obj.toArray) &&
-            pu.isFunction(obj.clear) &&
-            pu.isFunction(obj.forEach) &&
-            pu.isFunction(obj.map) &&
-            pu.isFunction(obj.reduce) &&
-            pu.hasGetters(obj,
-                'size', 'capacity');
+        return pu.isInstanceOfById(obj, SimpleRingBuffer.CLASS_ID);
     }
 }
 

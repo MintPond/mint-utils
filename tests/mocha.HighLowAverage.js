@@ -122,44 +122,4 @@ describe('HighLowAverage', () => {
             assert.strictEqual(hla.count, 0);
         });
     });
-
-    describe('instanceof handling', () => {
-        beforeEach(globalBE);
-
-        it('should return true when the instance is exact', () => {
-            assert.strictEqual(hla instanceof MUHighLowAverage, true);
-        });
-
-        it('should return false when the instance is NOT exact', () => {
-
-            class NotHighLowAverage {}
-            const not = new NotHighLowAverage();
-
-            assert.strictEqual(not instanceof MUHighLowAverage, false);
-        });
-
-        it('should return true when the instance extends the valid class', () => {
-
-            class ExtendedHighLowAverage extends MUHighLowAverage {}
-            const extended = new ExtendedHighLowAverage();
-
-            assert.strictEqual(extended instanceof MUHighLowAverage, true);
-        });
-
-        it('should return true if the instance meets all of the API criteria', () => {
-
-            class HighLowAverage {
-                add() {}
-                clear() {}
-                get count() {}
-                get high() {}
-                get average() {}
-                get low() {}
-            }
-
-            const substitute = new HighLowAverage();
-
-            assert.strictEqual(substitute instanceof MUHighLowAverage, true);
-        });
-    });
 });

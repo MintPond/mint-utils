@@ -108,11 +108,9 @@ class EntryCounter {
     }
 
 
+    static get CLASS_ID() { return '8f3d5286a76b44d812f886e69391025f0cc4d5ff07381c5f1710770447d72efc'; }
     static [Symbol.hasInstance](obj) {
-        return pu.isInstanceOfByName(obj, 'EntryCounter') &&
-            pu.isFunction(obj.increment) &&
-            pu.isFunction(obj.clear) &&
-            pu.hasGetters(obj, 'count');
+        return pu.isInstanceOfById(obj, EntryCounter.CLASS_ID);
     }
 }
 

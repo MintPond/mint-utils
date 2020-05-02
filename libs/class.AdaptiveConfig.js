@@ -178,13 +178,10 @@ class AdaptiveConfig {
     }
 
 
+    static get CLASS_ID() { return 'cb2018e53b522ae5bd554a5445c1dbdb1903223f941a8f33f25e07371d78b510'; }
+    static TEST_INSTANCE(AdaptiveConfig) { return new AdaptiveConfig({}); }
     static [Symbol.hasInstance](obj) {
-        return pu.isInstanceOfByName(obj, 'AdaptiveConfig') &&
-            pu.isFunction(obj.getValue) &&
-            pu.isFunction(obj.setValue) &&
-            pu.isFunction(obj.clearValue) &&
-            pu.isFunction(obj.setParam) &&
-            pu.isFunction(obj.clearParam);
+        return pu.isInstanceOfById(obj, AdaptiveConfig.CLASS_ID);
     }
 }
 

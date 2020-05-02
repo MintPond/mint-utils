@@ -170,12 +170,9 @@ class HighLowAverage {
     }
 
 
+    static get CLASS_ID() { return 'f45285f6b7b005ba335054c9e4d67af7f8d6cd417cb947346dabf2f8fd161640'; }
     static [Symbol.hasInstance](obj) {
-        return pu.isInstanceOfByName(obj, 'HighLowAverage') &&
-            pu.isFunction(obj.add) &&
-            pu.isFunction(obj.clear) &&
-            pu.hasGetters(obj,
-                'count', 'high', 'average', 'low');
+        return pu.isInstanceOfById(obj, HighLowAverage.CLASS_ID);
     }
 }
 

@@ -81,11 +81,9 @@ class Counter {
     }
 
 
+    static get CLASS_ID() { return '094df13208caee88228f07621b8db5fc21a2827264dc4f0a60bcf1b64878c15f'; }
     static [Symbol.hasInstance](obj) {
-        return pu.isInstanceOfByName(obj, 'Counter') &&
-            pu.isFunction(obj.next) &&
-            pu.isFunction(obj.nextHex32) &&
-            pu.isFunction(obj.reset);
+        return pu.isInstanceOfById(obj, Counter.CLASS_ID);
     }
 }
 

@@ -343,55 +343,6 @@ describe('WorkTracker', () => {
         });
     });
 
-
-    describe('instanceof handling', () => {
-        beforeEach(globalBe);
-
-        it('should return true when the instance is exact', () => {
-            assert.strictEqual(workTracker instanceof MUWorkTracker, true);
-        });
-
-        it('should return false when the instance is NOT exact', () => {
-
-            class NotWorkTracker {}
-            const not = new NotWorkTracker();
-
-            assert.strictEqual(not instanceof MUWorkTracker, false);
-        });
-
-        it('should return true when the instance extends the valid class', () => {
-
-            class ExtendedWorkTracker extends MUWorkTracker {}
-            const extended = new ExtendedWorkTracker('extended');
-
-            assert.strictEqual(extended instanceof MUWorkTracker, true);
-        });
-
-        it('should return true if the instance meets all of the API criteria', () => {
-
-            class WorkTracker {
-                createChild() {}
-                increment() {}
-                start() {}
-                stop() {}
-                getStatus() {}
-                reset() {}
-                destroy() {}
-                get contextName() {}
-                get timingsEnabled() {}
-                get totalInProgress() {}
-                get localTotalInProgress() {}
-                get isWorking() {}
-                get inProgressArr() {}
-                get profile() {}
-            }
-
-            const substitute = new WorkTracker();
-
-            assert.strictEqual(substitute instanceof MUWorkTracker, true);
-        });
-    });
-
     describe('profile property', () => {
         beforeEach(globalBe);
 

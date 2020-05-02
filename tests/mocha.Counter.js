@@ -134,42 +134,4 @@ describe('Counter', () => {
             });
         });
     });
-
-
-    describe('instanceof handling', () => {
-        beforeEach(() => { counter = new MUCounter(10, -10, 12); });
-
-        it('should return true when the instance is exact', () => {
-            assert.strictEqual(counter instanceof MUCounter, true);
-        });
-
-        it('should return false when the instance is NOT exact', () => {
-
-            class NotCounter {}
-            const not = new NotCounter();
-
-            assert.strictEqual(not instanceof MUCounter, false);
-        });
-
-        it('should return true when the instance extends the valid class', () => {
-
-            class ExtendedCounter extends MUCounter { constructor(...args) {super(...args); }}
-            const extended = new ExtendedCounter(10, -10, 12);
-
-            assert.strictEqual(extended instanceof MUCounter, true);
-        });
-
-        it('should return true if the instance meets all of the API criteria', () => {
-
-            class Counter {
-                next() {}
-                nextHex32() {}
-                reset() {}
-            }
-
-            const substitute = new Counter();
-
-            assert.strictEqual(substitute instanceof MUCounter, true);
-        });
-    });
 });

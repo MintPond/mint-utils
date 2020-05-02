@@ -104,40 +104,4 @@ describe('CallbackBuffer', () => {
             assert.strictEqual(isCalled, true);
         });
     });
-
-    describe('instanceof handling', () => {
-        beforeEach(() => { callbacks = new MUCallbackBuffer(); });
-
-        it('should return true when the instance is exact', () => {
-            assert.strictEqual(callbacks instanceof MUCallbackBuffer, true);
-        });
-
-        it('should return false when the instance is NOT exact', () => {
-
-            class NotCallbackBuffer {}
-            const not = new NotCallbackBuffer();
-
-            assert.strictEqual(not instanceof MUCallbackBuffer, false);
-        });
-
-        it('should return true when the instance extends the valid class', () => {
-
-            class ExtendedCallbackBuffer extends MUCallbackBuffer {}
-            const extended = new ExtendedCallbackBuffer();
-
-            assert.strictEqual(extended instanceof MUCallbackBuffer, true);
-        });
-
-        it('should return true if the instance meets all of the API criteria', () => {
-
-            class CallbackBuffer {
-                addCallback() {}
-                callback() {}
-            }
-
-            const substitute = new CallbackBuffer();
-
-            assert.strictEqual(substitute instanceof MUCallbackBuffer, true);
-        });
-    });
 });
