@@ -544,6 +544,33 @@ const mu = module.exports = {
     isPowerOf2: isPowerOf2,
 
     /**
+     * Parse hex value to number.
+     *
+     * @param hex {string}
+     * @returns {number}
+     */
+    parseHex: parseHex,
+
+    /**
+     * Parse hex value to BigInt.
+     *
+     * @param hex {string}
+     * @returns {BigInt}
+     */
+    parseHexToBi: parseHexToBi,
+
+    /**
+     * Expand number of bytes in a big endian hex value.
+     * A "0x" prefix will be stripped.
+     * If the hex is larger than the specified size then the hex is returned without changing its byte size.
+     *
+     * @param hex {string}
+     * @param size {number} The number of bytes the hex should be.
+     * @returns {string}
+     */
+    expandHex: expandHex,
+
+    /**
      * Get a pseudo random integer (fast random).
      *
      * @param min {number} The minimum acceptable value.
@@ -682,7 +709,13 @@ function throwFn(message, callback) {
         error = message;
     }
     else if (typeof message === 'object') {
+        if (message.toJSON) {
+            message = message.toJSON();
+        }
         error = new Error(message.toString());
+        Object.keys(message).forEach(key => {
+            error[key] = message[key];
+        });
     }
     else {
         error = new Error('unspecified error');
@@ -1335,6 +1368,43 @@ function isPowerOf2(num) {
         return false;
 
     return Number(bi & (bi - 1n)) === 0;
+}
+
+
+function parseHex(hex) {
+    precon.string(hex, 'hex');
+
+    if (hex.startsWith('0x'))
+        hex = hex.substr(2);
+
+    return parseInt(hex, 16);
+}
+
+
+function parseHexToBi(hex) {
+    precon.string(hex, 'hex');
+
+    if (!hex.startsWith('0x'))
+        hex = `0x${hex}`;
+
+    return BigInt(hex);
+}
+
+
+function expandHex(hex, size) {
+    precon.string(hex, 'hex');
+    precon.positiveInteger(size, 'size');
+
+    if (hex.startsWith('0x'))
+        hex = hex.substr(2);
+
+    const charLen = size * 2;
+    const padLen = charLen - hex.length;
+
+    if (padLen <= 0)
+        return hex;
+
+    return '0'.repeat(padLen) + hex;
 }
 
 

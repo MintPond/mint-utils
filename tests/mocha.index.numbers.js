@@ -37,4 +37,90 @@ describe('mint-utils (numbers)', () => {
             assert.strictEqual(mu.isPowerOf2(1536), false);
         });
     });
+
+    describe('parseHex function', () => {
+
+        it('should return number type', () => {
+            const num = mu.parseHex('0xFE');
+            assert.strictEqual(typeof num, 'number');
+        });
+
+        it('should parse hex with "0x" prefix', () => {
+            const num = mu.parseHex('0xFE');
+            assert.strictEqual(num, 254);
+        });
+
+        it('should parse hex without "0x" prefix', () => {
+            const num = mu.parseHex('FE');
+            assert.strictEqual(num, 254);
+        });
+
+        it('should return NaN for invalid hex', () => {
+            const num = mu.parseHex('hello');
+            assert.strictEqual(isNaN(num), true);
+        });
+    });
+
+    describe('parseHexToBi function', () => {
+
+        it('should return bigint type', () => {
+            const bi = mu.parseHexToBi('0xFE');
+            assert.strictEqual(typeof bi, 'bigint');
+        });
+
+        it('should parse hex with "0x" prefix', () => {
+            const bi = mu.parseHexToBi('0xFE');
+            assert.strictEqual(bi.toString(10), '254');
+        });
+
+        it('should parse hex without "0x" prefix', () => {
+            const bi = mu.parseHexToBi('FE');
+            assert.strictEqual(bi.toString(10), '254');
+        });
+
+        it('should throw SyntaxError for invalid hex', () => {
+            try {
+                mu.parseHexToBi('hello');
+            }
+            catch(err) {
+                if (err instanceof SyntaxError)
+                    return;
+            }
+            throw new Error('SyntaxError expected');
+        });
+    });
+
+
+    describe('expandHex function', () => {
+
+        it('should correctly expand hex byte size (with "0x" prefix)', () => {
+            const expanded = mu.expandHex('0xFE', 4);
+            assert.strictEqual(expanded, '000000FE');
+        });
+
+        it('should correctly expand hex byte size (without "0x" prefix)', () => {
+            const expanded = mu.expandHex('FE', 4);
+            assert.strictEqual(expanded, '000000FE');
+        });
+
+        it('should NOT expand hex byte size if already larger than specified (with "0x" prefix)', () => {
+            const expanded = mu.expandHex('0x0000FE', 2);
+            assert.strictEqual(expanded, '0000FE');
+        });
+
+        it('should NOT expand hex byte size if already equal to specified (with "0x" prefix)', () => {
+            const expanded = mu.expandHex('0x00FE', 2);
+            assert.strictEqual(expanded, '00FE');
+        });
+
+        it('should NOT expand hex byte size if already larger than specified (without "0x" prefix)', () => {
+            const expanded = mu.expandHex('0000FE', 2);
+            assert.strictEqual(expanded, '0000FE');
+        });
+
+        it('should NOT expand hex byte size if already equal to specified (without "0x" prefix)', () => {
+            const expanded = mu.expandHex('00FE', 2);
+            assert.strictEqual(expanded, '00FE');
+        });
+    });
 });
