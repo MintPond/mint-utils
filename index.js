@@ -20,6 +20,7 @@ const mu = module.exports = {
     get STRONG_PASSWORD_CHARS() { return passwords.STRONG_PASSWORD_CHARS },
     get ALPHA_NUMERIC_CHARS() { return passwords.ALPHA_NUMERIC_CHARS },
     get BASE58_READABLE_CHARS() { return passwords.BASE58_READABLE_CHARS },
+    get HEX_CHARS() { return passwords.HEX_CHARS },
 
 
     // Classes

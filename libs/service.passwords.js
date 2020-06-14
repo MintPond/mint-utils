@@ -7,6 +7,7 @@ const
 const STRONG_PASSWORD_CHARS = '0123456789abcdefgijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ~!#@$&*-_+|\\/?<>';
 const ALPHA_NUMERIC_CHARS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const BASE58_READABLE_CHARS = '23456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
+const HEX_CHARS = '0123456789ABCDEFabcdef';
 
 
 module.exports = {
@@ -14,6 +15,7 @@ module.exports = {
     get STRONG_PASSWORD_CHARS() { return STRONG_PASSWORD_CHARS },
     get ALPHA_NUMERIC_CHARS() { return ALPHA_NUMERIC_CHARS },
     get BASE58_READABLE_CHARS() { return BASE58_READABLE_CHARS },
+    get HEX_CHARS() { return HEX_CHARS },
 
     /**
      * Hash a password using sha512 and a salt.
