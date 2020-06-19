@@ -238,4 +238,55 @@ describe('mint-utils (formatting)', () => {
             assert.strictEqual(result, 'aXabbbccc');
         });
     });
+
+    describe('parseJsEscapes function', () => {
+
+        it('should return a string unmodified when there are no escaped characters to import', () => {
+            const input = 'This is line 1';
+            const output = mu.parseJsEscapes(input);
+            assert.strictEqual('This is line 1', output);
+        });
+
+        it('should import new-line characters', () => {
+            const input = 'This is line 1\\nThis is line 2\\nThis is line 3\\n';
+            const output = mu.parseJsEscapes(input);
+            assert.strictEqual('This is line 1\nThis is line 2\nThis is line 3\n', output);
+        });
+
+        it('should import carriage-return characters', () => {
+            const input = 'This is line 1\\r\\nThis is line 2\\r\\nThis is line 3\\r\\n';
+            const output = mu.parseJsEscapes(input);
+            assert.strictEqual('This is line 1\r\nThis is line 2\r\nThis is line 3\r\n', output);
+        });
+
+        it('should import tab characters', () => {
+            const input = 'This is line 1\\n\\tThis is line 2\\t\\nThis is line 3\\t\\t';
+            const output = mu.parseJsEscapes(input);
+            assert.strictEqual('This is line 1\n\tThis is line 2\t\nThis is line 3\t\t', output);
+        });
+
+        it('should NOT import escaped new-line character (1)', () => {
+            const input = 'This is line 1\\\\nThis is line 2'/* This is line 1\\nThis is line 2 */;
+            const output = mu.parseJsEscapes(input);
+            assert.strictEqual('This is line 1\\nThis is line 2'/* This is line 1\nThis is line 2 */, output);
+        });
+
+        it('should NOT import escaped new-line character (2)', () => {
+            const input = 'This is line 1\\\\\\nThis is line 2'/* This is line 1\\\nThis is line 2 */;
+            const output = mu.parseJsEscapes(input);
+            assert.strictEqual('This is line 1\\\nThis is line 2'/* This is line 1\<\n>This is line 2 */, output);
+        });
+
+        it('should NOT import escaped carriage-return character', () => {
+            const input = 'This is line 1\\\\rThis is line 2' /* This is line 1\\rThis is line 2 */;
+            const output = mu.parseJsEscapes(input);
+            assert.strictEqual('This is line 1\\rThis is line 2'/* This is line 1\rThis is line 2 */, output);
+        });
+
+        it('should NOT import escaped tab character', () => {
+            const input = 'This is side 1\\\\tThis is side 2' /* This is side 1\\tThis is side 2 */;
+            const output = mu.parseJsEscapes(input);
+            assert.strictEqual('This is side 1\\tThis is side 2'/* This is side 1\tThis is side 2 */, output);
+        });
+    });
 });

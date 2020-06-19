@@ -537,6 +537,16 @@ const mu = module.exports = {
     replaceCharAt: replaceCharAt,
 
     /**
+     * Parse string for instances of Javascript escaped characters (i.e "\\n") and convert to character.
+     *
+     * Handles new-line (\n), carriage return (\n), and tab (\t)
+     *
+     * @param str {string}
+     * @returns {string}
+     */
+    parseJsEscapes: parseJsEscapes,
+
+    /**
      * Determine if a number is a power of 2.
      *
      * @param num {number}
@@ -1360,6 +1370,53 @@ function replaceCharAt(str, index, replacement) {
     precon.string(replacement, 'replacement');
 
     return str.substr(0, index) + replacement + str.substr(index + replacement.length);
+}
+
+
+function parseJsEscapes(str) {
+    precon.string(str, 'str');
+
+    let escapeCount = 0;
+    let result = '';
+
+    for (let i = 0; i < str.length; i++) {
+        let char = str.charAt(i);
+
+        if (char === '\\') {
+            escapeCount++
+        }
+        else if (escapeCount) {
+
+            const bs = (escapeCount - (escapeCount % 2)) / 2;
+
+            result += '\\'.repeat(bs);
+            escapeCount -= bs * 2;
+
+            if (escapeCount === 1) {
+
+                switch (char) {
+                    case 'n':
+                        char = '\n';
+                        break;
+                    case 'r':
+                        char = '\r';
+                        break;
+                    case 't':
+                        char = '\t';
+                        break;
+                }
+
+                escapeCount = 0;
+            }
+
+            result += char;
+        }
+        else {
+            result += char;
+        }
+    }
+
+    return result;
 }
 
 
