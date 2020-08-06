@@ -67,6 +67,12 @@ describe('AliasMap', () => {
         assert.strictEqual(map.get('value2'), undefined);
     });
 
+    it('should return alternate value from "get" function if set', () => {
+        const key = { name: 'value1', aliasArr: ['v1']};
+        map.set(key, 'value');
+        assert.strictEqual(map.get('value1'), 'value');
+    });
+
     it('should return true from "delete" function if deleted', () => {
         const value = { name: 'value1', aliasArr: ['v1']};
         map.set(value);
@@ -136,7 +142,7 @@ describe('AliasMap', () => {
         const v2 = { name: 'value2', aliasArr: ['v2']};
 
         map.set(v1);
-        map.set(v2);
+        map.set(v2, 'alternate2');
 
         const valArr = [];
 
@@ -145,7 +151,7 @@ describe('AliasMap', () => {
         });
 
         assert.strictEqual(valArr[0], v1);
-        assert.strictEqual(valArr[1], v2);
+        assert.strictEqual(valArr[1], 'alternate2');
     });
 
     it('should return name iterator from "keys" function', () => {
@@ -154,7 +160,7 @@ describe('AliasMap', () => {
         const v2 = { name: 'value2', aliasArr: ['v2']};
 
         map.set(v1);
-        map.set(v2);
+        map.set(v2, 'alternate2');
 
         const nameArr = [];
 
@@ -172,7 +178,7 @@ describe('AliasMap', () => {
         const v2 = { name: 'value2', aliasArr: ['v2']};
 
         map.set(v1);
-        map.set(v2);
+        map.set(v2, 'alternate2');
 
         const valArr = [];
         console.log(map.keys());
@@ -182,7 +188,7 @@ describe('AliasMap', () => {
         }
 
         assert.strictEqual(valArr[0], v1);
-        assert.strictEqual(valArr[1], v2);
+        assert.strictEqual(valArr[1], 'alternate2');
     });
 
     it('should have name/value iterator', () => {
@@ -191,7 +197,7 @@ describe('AliasMap', () => {
         const v2 = { name: 'value2', aliasArr: ['v2']};
 
         map.set(v1);
-        map.set(v2);
+        map.set(v2, 'alternate2');
 
         const nameArr = [];
         const valArr = [];
@@ -204,6 +210,6 @@ describe('AliasMap', () => {
         assert.strictEqual(nameArr[0], 'value1');
         assert.strictEqual(nameArr[1], 'value2');
         assert.strictEqual(valArr[0], v1);
-        assert.strictEqual(valArr[1], v2);
+        assert.strictEqual(valArr[1], 'alternate2');
     });
 });

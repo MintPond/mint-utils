@@ -61,22 +61,25 @@ class AliasMap {
     /**
      * Set a value into the map by its name and aliases.
      *
-     * @param value  An object that defines its own name and aliases.
-     * @param value.name {string}
-     * @param value.aliasArr {string[]}
+     * @param key  An object that defines its own name and aliases.
+     * @param key.name {string}
+     * @param key.aliasArr {string[]}
+     * @param [value] {*} The value to set. If undefined then the key is used as value.
      * @returns {AliasMap}
      */
-    set(value) {
-        precon.defined(value, 'value');
-        precon.string(value.name, 'name');
-        precon.arrayOf(value.aliasArr, 'string', 'aliasArr');
+    set(key, value) {
+        precon.defined(key, 'value');
+        precon.string(key.name, 'name');
+        precon.arrayOf(key.aliasArr, 'string', 'aliasArr');
 
         const _ = this;
 
-        _._map.set(value.name, value);
-        _._nameSet.add(value.name);
+        value = typeof value === 'undefined' ? key : value;
 
-        value.aliasArr.forEach(aliasName => {
+        _._map.set(key.name, value);
+        _._nameSet.add(key.name);
+
+        key.aliasArr.forEach(aliasName => {
             _._map.set(aliasName, value);
         });
 
@@ -87,20 +90,20 @@ class AliasMap {
     /**
      * Delete a value from the map.
      *
-     * @param value
-     * @param value.name {string}
-     * @param value.aliasArr {string[]}
+     * @param key
+     * @param key.name {string}
+     * @param key.aliasArr {string[]}
      * @returns {boolean}
      */
-    delete(value) {
-        precon.defined(value, 'value');
-        precon.string(value.name, 'name');
-        precon.arrayOf(value.aliasArr, 'string', 'aliasArr');
+    delete(key) {
+        precon.defined(key, 'value');
+        precon.string(key.name, 'name');
+        precon.arrayOf(key.aliasArr, 'string', 'aliasArr');
 
         const _ = this;
-        const isDeleted = _._map.delete(value.name);
-        _._nameSet.delete(value.name);
-        value.aliasArr.forEach(aliasName => {
+        const isDeleted = _._map.delete(key.name);
+        _._nameSet.delete(key.name);
+        key.aliasArr.forEach(aliasName => {
             _._map.delete(aliasName);
         });
         return isDeleted;
