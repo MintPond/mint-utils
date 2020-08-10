@@ -24,6 +24,7 @@ class WorkTracker extends EventEmitter {
         const _ = this;
         _._contextName = contextName;
         _._parent = parent;
+        _._profileMap = new Map();
         _._trackerMap = new Map();
         _._childrenMap = new Map();
         _._timingsEnabled = false;
@@ -60,6 +61,18 @@ class WorkTracker extends EventEmitter {
         for (const child of this._childrenMap.values()) {
             child.timingsEnabled = enabled;
         }
+    }
+
+    /**
+     * Get timings object map.
+     */
+    get timingsOMap() {
+        const timings = {};
+        for (const [trackerName, tracker] of this._trackerMap) {
+            if (tracker.stopWatch)
+                timings[trackerName] = tracker.stopWatch.toJSON();
+        }
+        return timings;
     }
 
     /**
@@ -111,21 +124,35 @@ class WorkTracker extends EventEmitter {
 
     /**
      * Get an object containing timings and work profile information.
-     * @returns {{contextName:string, total:number, inProgress:string[], children:*[], timingsEnabled:boolean, isWorking:boolean, localTotal:number}}
+     * @returns {{
+     *     contextName:string,
+     *     total:number,
+     *     inProgress:string[],
+     *     children:*[],
+     *     timingsEnabled:boolean,
+     *     isWorking:boolean,
+     *     localTotal:number
+     * }}
      */
     get profile() {
         const _ = this;
-        return {
+        const profile = {
             contextName: _._contextName,
             isWorking: _.isWorking,
             timingsEnabled: _.timingsEnabled,
             total: _.totalInProgress,
             localTotal: _.localTotalInProgress,
             inProgress: _.inProgressArr,
+            timings: undefined,
             children: Array.from(_._childrenMap.values()).map(child => {
                 return child.profile;
             })
         };
+
+        if (_._timingsEnabled)
+            profile.timings = _.timingsOMap;
+
+        return profile;
     }
 
 
@@ -144,8 +171,41 @@ class WorkTracker extends EventEmitter {
             return child;
 
         child = new WorkTracker(contextName, _);
+
+        for (const [profileName, report] of _._profileMap) {
+            const childReport = child._createProfile(profileName, _);
+            report.childMap.set(contextName, childReport);
+        }
+
         _._childrenMap.set(contextName, child);
         return child;
+    }
+
+
+    /**
+     * Create an independent profile of timings.
+     *
+     * Profiling starts as soon as the profile is created and ends when the profiles "complete()" function is called. Be
+     * sure to call the profiles "complete" function when finished to prevent "memory leak".
+     *
+     * @param profileName {string}
+     * @returns {{
+     *     name: string,
+     *     totalInProgress: number,
+     *     localTotalInProgress: number,
+     *     isWorking: boolean,
+     *     inProgressArr: string[],
+     *     timingsOMap: {...},
+     *     getStatus(trackerName:string),
+     *     reset(),
+     *     complete()
+     * }}
+     */
+    createProfile(profileName) {
+        precon.string(profileName, 'profileName');
+
+        const _ = this;
+        return _._createProfile(profileName);
     }
 
 
@@ -158,65 +218,74 @@ class WorkTracker extends EventEmitter {
         precon.string(name, 'name');
 
         const _ = this;
-        let data = _._trackerMap.get(name);
-        if (!data) {
-            data = _._createTracker(name);
-            _._trackerMap.set(name, data);
-        }
+        const tracker = _._getTracker(name, true/*add*/);
+        tracker.count++;
 
-        data.count++;
+        // profiles
+        for (const profile of _._profileMap.values()) {
+            const pTracker = _._getTracker(name, true/*add*/, profile.trackerMap);
+            pTracker.count++;
+        }
     }
 
 
     /**
-     * Start tracking a work item. If timings are enabled, will also start stop watch.
+     * Start tracking a work item. If timings are enabled, will also start stopwatch.
      *
-     * @param name {string} The tracker name.
+     * @param trackerName {string} The tracker name.
      */
-    start(name) {
-        precon.string(name, 'name');
+    start(trackerName) {
+        precon.string(trackerName, 'name');
 
         const _ = this;
-        let data = _._trackerMap.get(name);
-        if (!data) {
-            data = _._createTracker(name);
-            _._trackerMap.set(name, data);
-        }
+        const tracker = _._getTracker(trackerName, true/*add*/);
 
-        data.inProgress++;
-        data.count++;
+        tracker.inProgress++;
+        tracker.count++;
 
-        if (_.timingsEnabled) {
+        if (_.timingsEnabled)
+            _._startTimings(tracker);
 
-            if (!data.stopWatch)
-                data.stopWatch = new StopWatch();
-
-            data.stopWatch.start();
+        // profiles
+        for (const profile of _._profileMap.values()) {
+            const pTracker = _._getTracker(trackerName, true/*add*/, profile.trackerMap);
+            pTracker.inProgress++;
+            pTracker.count++;
+            _._startTimings(pTracker);
         }
 
         _._isWorking = true;
 
-        return _.stop.bind(_, name);
+        return _.stop.bind(_, trackerName);
     }
 
 
     /**
      * Stop tracking a work item. Also stops stopwatch.
      *
-     * @param name {string} The tracker name.
+     * @param trackerName {string} The tracker name.
      */
-    stop(name) {
-        precon.string(name, 'name');
+    stop(trackerName) {
+        precon.string(trackerName, 'name');
         const _ = this;
 
-        let data = _._trackerMap.get(name);
-        if (!data || data.inProgress === 0)
-            throw new Error(`"stop" called more times than "start" (${name})`);
+        let tracker = _._trackerMap.get(trackerName);
+        if (!tracker || tracker.inProgress === 0)
+            throw new Error(`"stop" called more times than "start" (${trackerName})`);
 
-        data.inProgress--;
+        tracker.inProgress--;
 
-        if (data.stopWatch && data.stopWatch.isStarted)
-            data.stopWatch.stop();
+        if (tracker.stopWatch && tracker.stopWatch.isStarted)
+            tracker.stopWatch.stop();
+
+        // profiles
+        for (const profile of _._profileMap.values()) {
+            const pTracker = profile.trackerMap.get(trackerName);
+            if (pTracker) {
+                pTracker.inProgress--;
+                pTracker.stopWatch.isStarted && pTracker.stopWatch.stop();
+            }
+        }
 
         _._checkLocal();
     }
@@ -225,16 +294,26 @@ class WorkTracker extends EventEmitter {
     /**
      * Get the status of a tracker.
      *
-     * @param name {string} The tracker name.
-     * @returns {{inProgress:number, count:number, stopWatch:{totalTimeMs:number, maxMs:number, avgTimeMs:number, minMs:number, isStarted:boolean, starts:number, timeMs:number}}}
+     * @param trackerName {string} The tracker name.
+     * @returns {{
+     *      inProgress:number,
+     *      count:number,
+     *      stopWatch: {
+     *          isStarted:boolean,
+     *          totalTimeMs:number,
+     *          maxMs:number,
+     *          avgTimeMs:number,
+     *          minMs:number,
+     *          starts:number,
+     *          timeMs:number
+     *      }
+     * }}
      */
-    getStatus(name) {
-        precon.string(name, 'name');
+    getStatus(trackerName) {
+        precon.string(trackerName, 'name');
 
         const _ = this;
-        let data = _._trackerMap.get(name);
-        if (!data)
-            data = _._createTracker(name);
+        const data = _._getTracker(trackerName, false/*add*/);
 
         return {
             inProgress: data.inProgress,
@@ -270,15 +349,26 @@ class WorkTracker extends EventEmitter {
     destroy() {
         const _ = this;
 
+        // remove from parent's child map
         if (_._parent) {
             _._parent._childrenMap.delete(_._contextName);
         }
         _._parent = null;
 
+        // cleanup profiles
+        for (const profile of _._profileMap.values()) {
+            profile.complete();
+            profile.parent && profile.parent.childMap.delete(_._contextName);
+        }
+        _._profileMap.clear();
+
+        // cleanup child tracker references
         for (const child of _._childrenMap.values()) {
             child.destroy();
         }
         _._childrenMap.clear();
+
+        // clear trackers
         _._trackerMap.clear();
     }
 
@@ -289,13 +379,138 @@ class WorkTracker extends EventEmitter {
     }
 
 
-    _createTracker(name) {
-        return {
-            name: name,
-            inProgress: 0,
-            count: 0,
-            stopWatch: null
+    _createProfile(profileName, parentProfile) {
+
+        const _ = this;
+        let profile = _._profileMap.get(profileName);
+        if (profile)
+            return profile;
+
+        profile = {
+            childMap: new Map(),
+            trackerMap: new Map(),
+            get name() { return profileName; },
+            get parent() { return parentProfile; },
+            /**
+             * Get the total number of in-progress work items being tracked. The number includes work in child contexts.
+             * @returns {number}
+             */
+            get totalInProgress() {
+                return profile.localTotalInProgress + Array.from(profile.childMap.values()).reduce((a, child) => {
+                    return a + child.totalInProgress;
+                }, 0);
+            },
+            /**
+             * Get the total number of in-progress work items being tracked by this instance.
+             * @returns {number}
+             */
+            get localTotalInProgress() {
+                return Array.from(profile.trackerMap.values()).reduce((a, tracker) => {
+                    return a + tracker.inProgress;
+                }, 0);
+            },
+            /**
+             * Quickly determine if there is work in-progress.
+             * @returns {boolean}
+             */
+            get isWorking() { return _.isWorking; },
+            /**
+             * Get array of tracker names that are currently in progress.
+             * @returns {string[]}
+             */
+            get inProgressArr() {
+                return Array.from(profile.trackerMap.values()).filter(tracker => tracker.inProgress).map(tracker => tracker.name);
+            },
+            /**
+             * Get timings object map.
+             */
+            get timingsOMap() {
+                const timings = {};
+                for (const [trackerName, tracker] of profile.trackerMap) {
+                    timings[trackerName] = tracker.stopWatch.toJSON();
+                }
+                return timings;
+            },
+            /**
+             * Get status of a work tracker by name.
+             * @param trackerName {string}
+             * @returns {{inProgress: number, count: number, stopWatch: *}}
+             */
+            getStatus(trackerName) {
+                precon.string(trackerName, 'trackerName');
+                const pTracker = _._getTracker(trackerName, false/*add*/, profile.trackerMap);
+                return {
+                    inProgress: pTracker.inProgress,
+                    count: pTracker.count,
+                    stopWatch: pTracker.stopWatch.toJSON()
+                };
+            },
+            /**
+             * Reset all values
+             */
+            reset() {
+                profile.trackerMap.clear();
+                Array.from(profile.childMap.values()).forEach(child => child.reset());
+            },
+            /**
+             * Complete profiling and unregister from parent work tracker.
+             * This is also equivalent of calling a destroy function.
+             */
+            complete() {
+                _._profileMap.delete(profileName);
+                Array.from(profile.childMap.values()).forEach(child => child.complete());
+            },
+            toJSON() {
+                return {
+                    contextName: _._contextName,
+                    isWorking: _.isWorking,
+                    total: _.totalInProgress,
+                    localTotal: _.localTotalInProgress,
+                    inProgress: _.inProgressArr,
+                    timings: profile.timingsOMap,
+                    children: Array.from(profile.childMap.values()).map(child => {
+                        return child.toJSON();
+                    })
+                };
+            }
         };
+
+        _._profileMap.set(profileName, profile);
+        for (const [contextName, child] of _._childrenMap) {
+            const childReport = child._createProfile(profileName, profile);
+            profile.childMap.set(contextName, childReport);
+        }
+
+        return profile;
+    }
+
+
+    _getTracker(name, add, sourceMap) {
+
+        const _ = this;
+        sourceMap = sourceMap || _._trackerMap;
+        let data = sourceMap.get(name);
+        if (!data) {
+            data = {
+                name: name,
+                inProgress: 0,
+                count: 0,
+                stopWatch: null
+            };
+            add && sourceMap.set(name, data);
+        }
+
+        return data;
+    }
+
+
+    _startTimings(tracker) {
+        const _ = this;
+
+        if (!tracker.stopWatch)
+            tracker.stopWatch = new StopWatch();
+
+        tracker.stopWatch.start();
     }
 
 
