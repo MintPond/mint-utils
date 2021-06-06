@@ -365,6 +365,8 @@ const mu = module.exports = {
     /**
      * Get the start time (epoch seconds) of the week of the specified time (epoch seconds or milliseconds)
      *
+     * The start of the week is Sunday at 12:00:00 AM UTC
+     *
      * @param [time=now] {number} The time in epoch seconds or milliseconds.
      * @param [weekOffset=0] {number} The number of weeks to offset the result.
      * @returns {number}
@@ -373,6 +375,8 @@ const mu = module.exports = {
 
     /**
      * Get the end time (epoch seconds) of the week of the specified time (epoch seconds or milliseconds)
+     *
+     * The end of the week is Saturday at 11:59:59 PM UTC
      *
      * @param [time=now] {number} The time in epoch seconds or milliseconds.
      * @param [weekOffset=0] {number} The number of weeks to offset the result.
@@ -1081,7 +1085,7 @@ function getWeekEndTime(time, weekOffset) {
 
     const day = DATE.getUTCDay();
 
-    DATE.setUTCDate(DATE.getUTCDate() + (7 - day) + 1);
+    DATE.setUTCDate(DATE.getUTCDate() + (7 - day));
     DATE.setUTCMilliseconds(0);
     DATE.setUTCSeconds(0);
     DATE.setUTCMinutes(0);

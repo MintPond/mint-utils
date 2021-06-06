@@ -111,15 +111,15 @@ describe('mint-utils (time)', () => {
     describe('getWeekEndTime function', () => {
 
         it('should return the epoch time at the end of the week of the specified time.', () => {
-            assert.strictEqual(mu.getWeekEndTime(1585004966), 1585526399);
-            assert.strictEqual(mu.getWeekEndTime(1585004993849), 1585526399);
+            assert.strictEqual(mu.getWeekEndTime(1622785607), 1622937599);
+            assert.strictEqual(mu.getWeekEndTime(1622785607849), 1622937599);
         });
 
         it('should return the correct epoch time when using weekOffset parameter.', () => {
-            assert.strictEqual(mu.getWeekEndTime(1585004966, 1), 1586131199);
-            assert.strictEqual(mu.getWeekEndTime(1585004966, -1), 1584921599);
-            assert.strictEqual(mu.getWeekEndTime(1585004993849, 1), 1586131199);
-            assert.strictEqual(mu.getWeekEndTime(1585004993849, -1), 1584921599);
+            assert.strictEqual(mu.getWeekEndTime(1622785607, 1), 1623542399);
+            assert.strictEqual(mu.getWeekEndTime(1622785607, -1), 1622332799);
+            assert.strictEqual(mu.getWeekEndTime(1622785607849, 1), 1623542399);
+            assert.strictEqual(mu.getWeekEndTime(1622785607849, -1), 1622332799);
         });
     });
 
